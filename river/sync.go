@@ -22,6 +22,9 @@ const (
 	// for the mysql int type to es date type
 	// set the [rule.field] created_time = ",date"
 	fieldTypeDate = "date"
+	// for the str type to es json type
+	// set the [rule.field] info_map = ",json"
+	filedTypeJSON = "json"
 )
 
 const mysqlDateFormat = "2006-01-02"
@@ -508,6 +511,11 @@ func (r *River) getFieldValue(col *schema.TableColumn, fieldType string, value i
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				fieldValue = r.makeReqColumnData(col, time.Unix(v.Int(), 0).Format(mysql.TimeFormat))
 			}
+		}
+	case filedTypeJSON:
+		if col.Type == schema.TYPE_STRING {
+			col.Type = schema.TYPE_JSON
+			fieldValue = r.makeReqColumnData(col, value)
 		}
 	}
 
